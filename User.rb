@@ -11,8 +11,6 @@ end
 
 
 class UserCollection
-  @user_collection
-
   def initialize
     @user_collection=[]
   end
@@ -45,22 +43,22 @@ class UserCollection
 end
 
 class DataControl
-  def open_data
-    File.open('data.csv')
+  def initialize(path)
+    @file=File.open(path)
+  end
+  def read(user_collection)
+    @file.gets
+    while (line = @file.gets) do
+      line =line.split(',')
+      user_collection.add_user(User.new(line[0],line[1],line[2],line[3],line[4]))
+    end
   end
 end
 
 
 
 user_collection = UserCollection.new
-data_control = DataControl.new
-file = data_control.open_data
-file.gets
-
-while (line = file.gets) do
-  line =line.split(',')
-  user_collection.add_user(User.new(line[0],line[1],line[2],line[3],line[4]))
-end
-
-user_collection.sort_by_phone!(true)
+data_control = DataControl.new('data.csv')
+data_control.read(user_collection)
+user_collection.sort_by_age!(true)
 user_collection.print()
